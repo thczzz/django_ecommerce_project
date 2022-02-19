@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Product Details</h1>
+
+            <ul>
+                <li>{{ data.product__name }}</li>
+                <li>sku: {{ data.sku }}</li>
+                <li>Price: ${{ data.store_price }}</li>
+                <li>In stock: {{ data.product_inventory__units}}</li>
+            </ul>
+
+
+<ul>
+    {% for attr in product_type_attrs %}
+        <li>
+        {{ attr.product_attribute__name }}
+            <ul>
+            {% for value in product_attrs_values %}
+                {% if value.attribute_values__product_attribute__name == attr.product_attribute__name %}
+
+                    {% if value.attribute_values__attribute_value in data.attr_vals %}
+                        <li id="target-{{ value.attribute_values__attribute_value }}" data-attribute="{{ attr.product_attribute__name }}" value="{{ value.attribute_values__attribute_value }}" class="selected fw-bold">{{ value.attribute_values__attribute_value }}</li>
+                    {% else %}
+                        <li id="target-{{ value.attribute_values__attribute_value }}" data-attribute="{{ attr.product_attribute__name }}" value="{{ value.attribute_values__attribute_value }}">{{ value.attribute_values__attribute_value }}</li>
+                    {% endif %}
+
+                {% endif %}
+            {% endfor %}
+            </ul>
+        </li>
+    {% endfor %}
+</ul>
+
+
+<script>
+    let d = {};
+    let selectedLis = [...document.querySelectorAll("[id^=target].selected")];
+
+    selectedLis.forEach(li => {
+        d[li.getAttribute("data-attribute")] = li.getAttribute("value");
+    })
+
+    $('[id^=target]').click(function () {
+        const value = this.getAttribute('value');
+        d[this.getAttribute('data-attribute')] = this.getAttribute('value')
+        const querystring = buildUrlWithParams(d)
+        const url = window.location.href.split('?')[0]
+        window.location.href = url + "?" + querystring;
+      });
+
+    function buildUrlWithParams(data) {
+        var searchparams = [];
+        for (var d in data) {
+            searchparams.push(d + '=' + data[d]);
+        }
+        return searchparams.join('&');
+  }
+</script>
+
+
+{% endblock content %}

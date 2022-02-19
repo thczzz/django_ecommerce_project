@@ -88,6 +88,26 @@ class Product(models.Model):
         return self.name
 
 
+class ProductAttribute(models.Model):
+    """
+    Product attribute table
+    """
+
+    name = models.CharField(
+        max_length=255,
+        unique=True,
+        verbose_name=_("product attribute name"),
+        help_text=_("format: required, unique, max_length-255")
+    )
+    description = models.TextField(
+        verbose_name=_("product attribute description"),
+        help_text=_("format: required"),
+    )
+
+    def __str__(self):
+        return self.name
+
+
 class ProductType(models.Model):
     """
     Product type table
@@ -98,6 +118,11 @@ class ProductType(models.Model):
         unique=True,
         verbose_name=_("type of product"),
         help_text=_("format: required, unique, max-255")
+    )
+    product_type_attributes = models.ManyToManyField(
+        ProductAttribute,
+        related_name="product_type_attributes",
+        through="ProductTypeAttribute"
     )
 
     def __str__(self):
@@ -114,26 +139,6 @@ class Brand(models.Model):
         unique=True,
         verbose_name=_("brand name"),
         help_text=_("format: required, unique, max-255")
-    )
-
-    def __str__(self):
-        return self.name
-
-
-class ProductAttribute(models.Model):
-    """
-    Product attribute table
-    """
-
-    name = models.CharField(
-        max_length=255,
-        unique=True,
-        verbose_name=_("product attribute name"),
-        help_text=_("format: required, unique, max_length-255")
-    )
-    description = models.TextField(
-        verbose_name=_("product attribute description"),
-        help_text=_("format: required"),
     )
 
     def __str__(self):
@@ -189,6 +194,11 @@ class ProductInventory(models.Model):
         default=True,
         verbose_name=_("product visibility"),
         help_text=_("format: true=product visible"),
+    )
+    is_default = models.BooleanField(
+        default=False,
+        verbose_name=_("default selection"),
+        help_text=_("format: true=sub product visible"),
     )
     retail_price = models.DecimalField(
         max_digits=6,
@@ -324,3 +334,23 @@ class ProductAttributeValues(models.Model):
 
     class Meta:
         unique_together = (("attributevalues", "productinventory"),)
+
+
+class ProductTypeAttribute(models.Model):
+    """
+    Product type attributes link table
+    """
+
+    product_attribute = models.ForeignKey(
+        ProductAttribute,
+        related_name="productattribute",
+        on_delete=models.PROTECT,
+    )
+    product_type = models.ForeignKey(
+        ProductType,
+        related_name="producttype",
+        on_delete=models.PROTECT,
+    )
+
+    class Meta:
+        unique_together = (("product_attribute", "product_type"),)
