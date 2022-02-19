@@ -1,4 +1,4 @@
-# django_ecommerce_project
+# django_ecommerce_project demo
 (Min. hours needed: 15, Deadline: 21.02.2022)
 
 Objectives:
