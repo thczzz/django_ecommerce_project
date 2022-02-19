@@ -15,7 +15,7 @@ Development Process Summary:
 ```
 1. Database design
 2. Inventory database development towards a test first approach
-3. Queries & Product Filter Prototype                               <<<-------------------- You are here
+3. Queries & Product Filter Prototype  <<<-------------------- You are here
 4. Implementing Elasticsearch
 5. Implementing the Django Rest Framework into our existing django project
 6. Integrating Elasticsearch with DRF
