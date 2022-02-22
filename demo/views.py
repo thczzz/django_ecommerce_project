@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.db.models import Count
 from django.contrib.postgres.aggregates import ArrayAgg
 from inventory import models
+from search.documents import ProductInventoryDocument
 
 
 def home(request):
@@ -48,3 +49,7 @@ def product_detail(request, slug):
 # ProductTypeAttribute -> ProductType -> ProductInventory -> Product || ProductTypeAttribute -> ProductAttribute
 
     return render(request, "product_detail.html", {'data': data, 'product_type_attrs': z, 'product_attrs_values': y})
+
+
+def elasticsearch_examples():
+    e = ProductInventoryDocument.search().query("match", product__name="sneakers")

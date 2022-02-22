@@ -257,7 +257,8 @@ class Media(models.Model):
 
     product_inventory = models.ForeignKey(
         ProductInventory,
-        on_delete=models.PROTECT
+        on_delete=models.PROTECT,
+        related_name="media_product_inventory",
     )
     image = models.ImageField(
         verbose_name=_("product image"),

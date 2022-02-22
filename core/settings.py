@@ -27,6 +27,21 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+INTERNAL_IPS = [
+    # ...
+    "127.0.0.1",
+    # ...
+]
+
+ELASTICSEARCH_DSL = {
+    "default": {"hosts": "192.168.99.100:9200"}
+}
+
+REST_FRAMEWORK = {
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
+    "PAGE_SIZE": 10,
+}
+
 
 # Application definition
 
@@ -38,13 +53,20 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    # development
+    "debug_toolbar",
+
     # external apps
     "mptt",
+    'django_elasticsearch_dsl',
+    'rest_framework',
 
     # local apps
     'dashboard',
     'inventory',
     'demo',
+    'rest_api',
+    'search',
 ]
 
 MIDDLEWARE = [
@@ -52,6 +74,7 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
