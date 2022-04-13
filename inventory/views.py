@@ -52,10 +52,10 @@ def home(request):
                 products = products.order_by('-created_at')
             context["sort_method"] = sort_method
 
-        current = request.GET.get("current", None)
         """
         GET products (AJAX req.)
         """
+        current = request.GET.get("current", None)
         if current is not None:
             html = perform_load_more(current, products=products)
             response = [html]
@@ -81,6 +81,7 @@ def get_variant_etc(obj):
     """
     GET product variants (size, material, etc..)
     """
+
     sizes = obj.attribute_values.values(
         "product_attribute__name",
         "attribute_value",
