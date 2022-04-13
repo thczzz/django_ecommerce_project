@@ -38,6 +38,19 @@ class Category(MPTTModel):
     def __str__(self):
         return self.name
 
+    def get_slug(self):
+        try:
+            ancestors = self.get_ancestors(include_self=True)
+        except:
+            ancestors = []
+        else:
+            ancestors = [i.slug for i in ancestors]
+        slugs = []
+        for i in range(len(ancestors)):
+            slugs.append('/'.join(ancestors[:i + 1]))
+
+        return slugs[-1]
+
 
 class Product(models.Model):
     """
@@ -86,6 +99,27 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+
+    """
+    Get product siblings: their (name, image, price, color)
+    """
+    @property
+    def get_variants(self):
+        variants = self.product.prefetch_related('media_product_inventory')
+        get_colors_query = variants.values(
+            "attribute_values__product_attribute__name",
+            "attribute_values__attribute_value",
+            "media_product_inventory__image",
+            "sku",
+            "retail_price",
+            "store_price",
+        ).distinct(
+            "attribute_values__product_attribute__name",
+            "attribute_values__attribute_value"
+        )
+
+        colors = list(filter(lambda x: x["attribute_values__product_attribute__name"] == "color", get_colors_query))
+        return colors
 
 
 class ProductAttribute(models.Model):
@@ -140,6 +174,9 @@ class Brand(models.Model):
         verbose_name=_("brand name"),
         help_text=_("format: required, unique, max-255")
     )
+
+    class Meta:
+        ordering = ('name',)
 
     def __str__(self):
         return self.name
@@ -214,7 +251,7 @@ class ProductInventory(models.Model):
     store_price = models.DecimalField(
         max_digits=6,
         decimal_places=2,
-        verbose_name=_("recommended retail price"),
+        verbose_name=_("recommended store price"),
         help_text=_("format: max price 9999.99"),
         error_messages={
             "name": {
@@ -225,7 +262,7 @@ class ProductInventory(models.Model):
     sale_price = models.DecimalField(
         max_digits=6,
         decimal_places=2,
-        verbose_name=_("recommended retail price"),
+        verbose_name=_("recommended sale price"),
         help_text=_("format: max price 9999.99"),
         error_messages={
             "name": {
@@ -290,7 +327,7 @@ class Media(models.Model):
 
     class Meta:
         verbose_name = _("product image")
-        verbose_name_plural= _("product images")
+        verbose_name_plural = _("product images")
 
 
 class Stock(models.Model):

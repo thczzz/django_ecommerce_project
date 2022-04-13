@@ -5,6 +5,22 @@ venv
 .vscode
 .idea
 
+# Templates #
+##############
+templates
+static/assets/css
+static/assets/scss
+static/assets/images
+static/assets/js
+static/assets/fonts
+
+
+# Apps #
+############
+blog
+cart
+
+
 # Django #
 ##########
 *.log

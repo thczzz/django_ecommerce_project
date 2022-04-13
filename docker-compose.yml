@@ -12,6 +12,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
   esearch:
+    restart: always
     container_name: search
     image: elasticsearch:7.14.2
     environment:
